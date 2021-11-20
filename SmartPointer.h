@@ -1,9 +1,9 @@
 #ifndef __SMARTPOINTER_H__
-#define __SMARTPOINTER_H__
+#define __SMARTPOITNER_H__
 
 namespace DSLib
 {
-template<typename T>
+template <typename T>
 
 class SmartPointer
 {
@@ -16,7 +16,7 @@ public:
     SmartPointer(const SmartPointer<T>& obj)
     {
         m_pointer = obj.m_pointer;
-        const_cast<SmartPointer<T>&>(obj).m_pointer = nullptr; 
+        const_cast<SmartPointer<T>&>(obj).m_pointer = nullptr;
     }
 
     SmartPointer<T>& operator=(const SmartPointer<T>& obj)
@@ -28,7 +28,7 @@ public:
             m_pointer = obj.m_pointer;
             const_cast<SmartPointer<T>&>(obj).m_pointer = nullptr;
         }
-      
+
         return *this;
     }
 
@@ -42,14 +42,14 @@ public:
         return m_pointer;
     }
 
-    T& operator*()
-    {
-        return *m_pointer;
-    }
-
     T* operator->()
     {
         return m_pointer;
+    }
+
+    T& operator*()
+    {
+        return *m_pointer;
     }
 
     ~SmartPointer()
@@ -57,10 +57,9 @@ public:
         delete m_pointer;
         m_pointer = nullptr;
     }
-
 protected:
-    T* m_pointer;    
+    T* m_pointer;
 };
-
 }
+
 #endif // !__SMARTPOINTER_H__
