@@ -1,31 +1,23 @@
 #include <iostream>
 #include "SmartPointer.h"
+#include "Exception.h"
 
+using namespace std;
 using namespace DSLib;
 
-class Test
-{
-public:
-    Test()
-    {
-        std::cout << "构造" << std::endl;
-    }
-
-    ~Test()
-    {
-        std::cout << "析构" << std::endl;
-    }
-};
 
 int main()
 {
-    SmartPointer<Test> sp = new Test();
-    SmartPointer<Test> nsp;
-
-    nsp = sp;
-    // nsp++; error: no ‘operator++(int)’ declared for postfix ‘++’ [-fpermissive
-    std::cout << sp.isNull() << std::endl;
-    std::cout << nsp.isNull() << std::endl;
+    try
+    {
+        throw Exception("test", __FILE__, __LINE__);
+    }
+    catch(const Exception& e)
+    {
+        cout << "catch(const Exception& e)" << endl;
+        cout << e.message() << endl;
+        cout << e.location() << endl;
+    }
 
     return 0;
 }

@@ -8,15 +8,15 @@ template <typename T>
 class SmartPointer
 {
 public:
-    SmartPointer(T* p = nullptr)
-    {
-        m_pointer = p;
-    }
+   SmartPointer(T* p = NULL)
+   {
+       m_pointer = p;
+   }
 
     SmartPointer(const SmartPointer<T>& obj)
     {
         m_pointer = obj.m_pointer;
-        const_cast<SmartPointer<T>&>(obj).m_pointer = nullptr;
+        const_cast<SmartPointer<T>&>(obj).m_pointer = NULL;
     }
 
     SmartPointer<T>& operator=(const SmartPointer<T>& obj)
@@ -24,9 +24,8 @@ public:
         if (this != &obj)
         {
             delete m_pointer;
-            m_pointer = nullptr;
             m_pointer = obj.m_pointer;
-            const_cast<SmartPointer<T>&>(obj).m_pointer = nullptr;
+            const_cast<SmartPointer<T>&>(obj).m_pointer = NULL;
         }
 
         return *this;
@@ -34,15 +33,10 @@ public:
 
     bool isNull()
     {
-        return (m_pointer == nullptr);
+        return (m_pointer == NULL);
     }
 
     T* get()
-    {
-        return m_pointer;
-    }
-
-    T* operator->()
     {
         return m_pointer;
     }
@@ -52,11 +46,17 @@ public:
         return *m_pointer;
     }
 
+    T* operator->()
+    {
+        return m_pointer;
+    }
+
     ~SmartPointer()
     {
         delete m_pointer;
-        m_pointer = nullptr;
+        m_pointer = NULL;
     }
+
 protected:
     T* m_pointer;
 };
