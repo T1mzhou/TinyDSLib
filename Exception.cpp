@@ -17,7 +17,7 @@ void Exception::init(const char* message, const char* file, int line)
         char sl[16] = {0};
         
         // linux 没有itoa
-        snprintf(sl, 10,"%d", line);
+        snprintf(sl, sizeof(sl),"%d", line);
         
         m_location = static_cast<char*>(malloc(strlen(file) + strlen(sl) + 2));
         if (m_location != NULL)
