@@ -1,9 +1,14 @@
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
 
+#include "Object.h"
+
 namespace DSLib
 {
-class Exception
+
+#define THROW_EXCEPTION(e, m)  (throw e(e, __FILE__, __LINE__))
+
+class Exception : public Object
 {
 public:
     Exception(const char* message);

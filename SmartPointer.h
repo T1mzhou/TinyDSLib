@@ -1,11 +1,13 @@
 #ifndef __SMARTPOINTER_H__
 #define __SMARTPOITNER_H__
 
+#include "Object.h"
+
 namespace DSLib
 {
 template <typename T>
 
-class SmartPointer
+class SmartPointer : public Object
 {
 public:
    SmartPointer(T* p = NULL)
