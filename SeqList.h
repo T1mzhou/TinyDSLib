@@ -43,14 +43,56 @@ public:
 
         return ret;
     }
-    
-    bool set(int i, const T& e);
-    bool get(int i, T& e) const;
-    int length() const;
-    void clear();
 
-    T& operator[] (int i);
-    T operator[](int i) const;
+    bool set(int i, const T& e)
+    {
+        bool ret = (0 <= i) && (i < m_length);
+        if ( ret )
+        {
+            m_array[i] = e;
+        }
+
+        return ret;
+    }
+
+    bool get(int i, T& e) const
+    {
+        bool ret = (0 <=i ) && (i < m_length);
+        if ( ret )
+        {
+            e = m_arrayp[i];
+        }
+
+        return ret;
+    }
+    int length() const
+    {
+        return m_length;
+    }
+
+    void clear()
+    {
+        m_length = 0;
+    }
+
+    T& operator[] (int i)
+    {
+        bool ret = (0 <=i ) && (i < m_length);
+        if ( ret )
+        {
+            return m_array[i];
+        }
+        else
+        {
+            
+        }
+    }
+
+    T operator[](int i) const
+    {
+        return const_cast<SeqList<T>&>(*this)[i];
+    }
+    
     virtual int capacity() const = 0;
 protected:
     T* m_array;        // 顺序存储空间
