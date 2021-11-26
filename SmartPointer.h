@@ -5,7 +5,7 @@
 
 namespace DSLib
 {
-template <typename T>
+template < typename T >
 
 class SmartPointer : public Object
 {

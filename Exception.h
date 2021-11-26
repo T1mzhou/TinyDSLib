@@ -6,7 +6,7 @@
 namespace DSLib
 {
 
-#define THROW_EXCEPTION(e, m)  (throw e(e, __FILE__, __LINE__))
+#define THROW_EXCEPTION(e, m)  (throw e(m, __FILE__, __LINE__))
 
 class Exception : public Object
 {

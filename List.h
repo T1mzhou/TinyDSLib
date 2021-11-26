@@ -1,13 +1,13 @@
 #ifndef __LIST_H__
 #define __LIST_H__
 
-#include "object"
+#include "Object.h"
 
 namespace DSLib 
 {
 
-template<typname T>
-class List : public object
+template < typename T >
+class List : public Object
 {
 public:
     virtual bool insert(int i, const T& e) = 0;

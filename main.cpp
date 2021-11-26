@@ -1,6 +1,7 @@
 #include <iostream>
 #include "SmartPointer.h"
 #include "Exception.h"
+#include "SeqList.h"
 
 using namespace std;
 using namespace DSLib;
@@ -8,16 +9,7 @@ using namespace DSLib;
 
 int main()
 {
-    try
-    {
-        throw Exception("test", __FILE__, __LINE__);
-    }
-    catch(const Exception& e)
-    {
-        cout << "catch(const Exception& e)" << endl;
-        cout << e.message() << endl;
-        cout << e.location() << endl;
-    }
+   SeqList<int>* l;
 
     return 0;
 }
