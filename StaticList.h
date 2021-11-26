@@ -6,7 +6,7 @@
 namespace DTLib
 {
 
-template < typename T, int N>
+template < typename T, int N >
 class StaticList : public SeqList<T>
 {
 public:
