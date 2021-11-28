@@ -10,6 +10,7 @@ template < typename T >
 class List : public Object
 {
 public:
+    virtual bool insert(const T& e) = 0;
     virtual bool insert(int i, const T& e) = 0;
     virtual bool remove(int i) = 0;
     virtual bool set(int i, const T& e) = 0;
@@ -18,7 +19,7 @@ public:
     virtual void clear() = 0;
 
 public:
-    List() { }
+    List() { } 
 protected:
     List(const List&);
     List& operator= (const List&);

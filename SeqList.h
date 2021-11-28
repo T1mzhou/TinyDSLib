@@ -12,6 +12,12 @@ template < typename T >
 class SeqList : public List<T>
 {
 public:
+
+    bool insert(const T& e)
+    {
+        return insert(m_length， e);
+    }
+    
     bool insert(int i, const T& e)
     {
         bool ret = ( 0 <=i ) && (i <= m_length);
