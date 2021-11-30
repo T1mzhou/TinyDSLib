@@ -2,6 +2,7 @@
 #define __LINKLIST_H__
 
 #include "List.h"
+#include "Exception.h"
 
 
 namespace DSLib
@@ -24,7 +25,7 @@ public:
 
     bool insert(int i, const T& e)
     {
-        bool ret = (0 <= i()  && (i <= m_length);
+        bool ret = ((0 <= i)  && (i <= m_length));
 
         if ( ret )
         {
@@ -32,17 +33,16 @@ public:
 
             if ( node != NULL)
             {
-                Node* ret = reinterpret_cast<Node*>(&m_header);
+                Node* current = reinterpret_cast<Node*>(&m_header);
 
                 for (int p = 0; p < i; p++)
                 {
-                    ret = ret->next;
+                    current = current->next;
                 }
 
                 node->value = e;
-                node->next = NULL;
-                
-                ret->next = node;
+                node->next = current->next; // 可能从不同的地方插入
+                current->next = node;
 
                 m_length++;
             }
@@ -57,19 +57,19 @@ public:
 
     bool remove(int i)
     {
-        bool ret = (0 <= i) && (i <= m_length);
+        bool ret = (0 <= i) && (i < m_length); // different
 
         if ( ret )
         {
-            Node* node = reinterpret_cast<Node*>(&m_header);
+            Node* current = reinterpret_cast<Node*>(&m_header);
             
             for (int p = 0; p < i; p++)
             {
-                node = node->next;
+                current = current->next;
             }
 
-            Node* toDel = node->next;
-            node->next = toDel->next;
+            Node* toDel = current->next;
+            current->next = toDel->next;
             
             delete toDel;
 
@@ -85,33 +85,47 @@ public:
 
         if ( ret )
         {   
-            Node* node = reinterpret_cast<Node*>(&m_header);
+            Node* current = reinterpret_cast<Node*>(&m_header);
 
             for (int p = 0; p < i; p++)
             {
-                node = node->next;
+                current = current->next;
             }
 
-            node->next->value = e;
+            current->next->value = e;
         }
         
         return ret;
     }
 
-    bool get(int i, T& e)
+    T get(int i) const
+    {
+        T ret;
+
+        if ( get(i, ret) )
+        {
+            return ret;
+        }
+        else
+        {
+            THROW_EXCEPTION(IndexOutOfBoundsExcetpion, "Invalid parameter i to get element ....");
+        }
+
+    }
+    bool get(int i, T& e) const
     {
         bool ret = (0 <= i) && (i <= m_length);
 
         if ( ret )
         {
-            Node* node = reinterpret_cast<Node*>(&m_header);
+            Node* current = reinterpret_cast<Node*>(&m_header);
 
             for (int p = 0; p < i; p++)
             {
-                node = node->next;
+                current = current->next;
             }
 
-            e = node->next->value;
+            e = current->next->value;
         } 
 
         return ret;
@@ -124,20 +138,20 @@ public:
     
     void clear()
     {
-       ~LinkList();
-    }
-
-    ~LinkList()
-    {
-        while ( m_header->next )
+        while ( m_header.next )
         {
-            Node *toDel = m_header->next;
-            m_header->next = toDel->next;
+            Node *toDel = m_header.next;
+            m_header.next = toDel->next;
 
             delete toDel;
         }
 
         m_length = 0;
+    }
+
+    ~LinkList()
+    {
+       clear();
     }
 
 protected:
@@ -147,7 +161,7 @@ protected:
         Node* next;
     };
 
-    Node m_header;
+    mutable Node m_header; // const成员函数中取地址
     int m_length;  
 };
 
