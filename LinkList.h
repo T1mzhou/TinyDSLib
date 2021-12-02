@@ -18,6 +18,18 @@ public:
         m_length = 0;
     }
 
+    Node* position(int i) const
+    {
+         Node* current = reinterpret_cast<Node*>(&m_header);
+            
+        for (int p = 0; p < i; p++)
+        {
+            current = current->next;
+        }
+
+        return current;
+    }
+
     bool insert(const T& e)
     {
         insert(m_length, e);
@@ -33,12 +45,7 @@ public:
 
             if ( node != NULL)
             {
-                Node* current = reinterpret_cast<Node*>(&m_header);
-
-                for (int p = 0; p < i; p++)
-                {
-                    current = current->next;
-                }
+                Node* current = position(i);
 
                 node->value = e;
                 node->next = current->next; // 可能从不同的地方插入
@@ -61,12 +68,7 @@ public:
 
         if ( ret )
         {
-            Node* current = reinterpret_cast<Node*>(&m_header);
-            
-            for (int p = 0; p < i; p++)
-            {
-                current = current->next;
-            }
+            Node* current = position(i);
 
             Node* toDel = current->next;
             current->next = toDel->next;
@@ -85,14 +87,7 @@ public:
 
         if ( ret )
         {   
-            Node* current = reinterpret_cast<Node*>(&m_header);
-
-            for (int p = 0; p < i; p++)
-            {
-                current = current->next;
-            }
-
-            current->next->value = e;
+            position(i)->next->value = e;
         }
         
         return ret;
@@ -117,15 +112,8 @@ public:
         bool ret = (0 <= i) && (i <= m_length);
 
         if ( ret )
-        {
-            Node* current = reinterpret_cast<Node*>(&m_header);
-
-            for (int p = 0; p < i; p++)
-            {
-                current = current->next;
-            }
-
-            e = current->next->value;
+        { 
+            e = position(i)->next->value;
         } 
 
         return ret;
@@ -161,7 +149,12 @@ protected:
         Node* next;
     };
 
-    mutable Node m_header; // const成员函数中取地址
+    mutable struct : public Object // const成员函数中取地址
+    {
+        char reserved[sizeof(T)]; // 内存布局相同
+        Node* next;
+    } m_header;                   
+
     int m_length;  
 };
 
