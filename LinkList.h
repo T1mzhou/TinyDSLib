@@ -107,6 +107,7 @@ public:
         }
 
     }
+
     bool get(int i, T& e) const
     {
         bool ret = (0 <= i) && (i <= m_length);
@@ -122,6 +123,29 @@ public:
     bool length() const 
     {
         return m_length;
+    }
+
+    int find(const T& e) const
+    {
+        int ret = -1;
+        int i = 0;
+        Node* node = m_header->next;
+
+        while ( node )
+        {
+            if ( node->value == e )
+            {
+                ret = i;
+                break;
+            }
+            else
+            {
+                node = node->next;
+                i++;
+            }
+        }
+
+        return ret;
     }
     
     void clear()
