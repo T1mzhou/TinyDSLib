@@ -16,6 +16,8 @@ public:
     {
         m_header->next = NULL;
         m_length = 0;
+        m_current = NULL;
+        m_step = 1;
     }
 
     Node* position(int i) const
@@ -41,7 +43,7 @@ public:
 
         if ( ret )
         {
-            Node* node = new Node;
+            Node* node = create();
 
             if ( node != NULL)
             {
@@ -73,7 +75,7 @@ public:
             Node* toDel = current->next;
             current->next = toDel->next;
             
-            delete toDel;
+             destory(toDel);
 
             m_length--;
         }
@@ -103,7 +105,7 @@ public:
         }
         else
         {
-            THROW_EXCEPTION(IndexOutOfBoundsExcetpion, "Invalid parameter i to get element ....");
+            THROW_EXCEPTION(IndexOutOfBoundsException, "Invalid parameter i to get element ....");
         }
 
     }
@@ -154,16 +156,71 @@ public:
         {
             Node *toDel = m_header.next;
             m_header.next = toDel->next;
-
-            delete toDel;
+            
+            destory(toDel);
         }
 
         m_length = 0;
     }
 
+    bool move(int i, int step = 1)
+    {
+        bool ret = ((0 <= i) && (i < length()) && (step >= 0));
+
+        if ( ret )
+        {
+            m_current = position(i)->next;
+            m_step = step;
+        }
+    }
+
+    bool end()
+    {
+        return (m_current == NULL);
+    }
+
+    T current()
+    {
+        if ( m_current != NULL )
+        {
+            if ( !end() )
+            {
+                return m_current->value;
+            }
+            else
+            {
+                THROW_EXCEPTION(InvalidOperationException, "No value at current position ....");
+            }
+        }
+    }
+
+    bool next()
+    {
+        int i = 0;
+
+        while ( (i < m_step) && (!end() )
+        {
+            m_current = m_current->next;
+            i++;
+        }
+
+        return (i == m_step);  
+    }
+
     ~LinkList()
     {
        clear();
+    }
+
+protected:
+    virtual Node* create()
+    {
+        return new Node();
+    }
+
+    virtual void destory(Node* pn)
+    {
+        delete pn;
     }
 
 protected:
@@ -178,6 +235,9 @@ protected:
         char reserved[sizeof(T)]; // 内存布局相同
         Node* next;
     } m_header;                   
+
+    Node* m_current;
+    int   m_step;
 
     int m_length;  
 };

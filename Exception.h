@@ -96,5 +96,20 @@ class InvalidParameterException : public Exception
     }
 };
 
+
+class InvalidOperationException : public Exception
+{
+    InvalidOperationException(const char* message) : Exception(message)  { }
+    InvalidOperationException(char* file, int line) : Exception(file, line) { }
+    InvalidOperationException(const char* message, const char* file, int line) : Exception(message, file, line) { }
+    InvalidOperationException(const InvalidOperationException& e) :  Exception(e) { }
+    InvalidOperationException& operator=(const InvalidOperationException& e)
+    {
+        Exception::operator=(e);
+        return *this;
+    }
+
+};
+
 }
 #endif // !__EXCEPTION_H__
