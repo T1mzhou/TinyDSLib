@@ -74,10 +74,13 @@ public:
 
             Node* toDel = current->next;
             current->next = toDel->next;
-            
+
+            m_length--; // fix bug add 异常安全性
             destroy(toDel);
 
-            m_length--;
+            // m_length--;
+
+           
         }
 
         return ret;
@@ -157,10 +160,11 @@ public:
             Node *toDel = m_header.next;
             m_header.next = toDel->next;
             
+            m_length--;     // fixbug 异常安全
             destroy(toDel);
         }
 
-        m_length = 0;
+        // m_length = 0;
     }
 
     bool move(int i, int step = 1)
