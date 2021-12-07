@@ -23,6 +23,11 @@ public:
         return N;
     }    
 
+    ~StaticLinkList()
+    {
+        this->clear(); // fixbug 内存泄漏,未实现子类的析构函数，调用的是父类的detroy函数，
+    }                  // 析构函数里面不会发生多态，只会调用自己类中的detroy函数
+
 protected:
     typedef typename LinkList<T>::Node Node;
 
