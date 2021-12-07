@@ -10,7 +10,8 @@ namespace DSLib
 {
 void Exception::init(const char* message, const char* file, int line)
 {
-    m_message = strdup(message);
+    // fix bug strdup glic里面没有判断为空的状况
+    m_message = (message ? strdup(message) : NULL);
     
     if (file != NULL)
     {
