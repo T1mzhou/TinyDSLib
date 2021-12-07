@@ -2,22 +2,23 @@
 #define __SMARTPOITNER_H__
 
 #include "Object.h"
+#include "pointer.h"
 
 namespace DSLib
 {
 template < typename T >
 
-class SmartPointer : public Object
+class SmartPointer : public Pointer<T>
 {
 public:
-   SmartPointer(T* p = NULL)
+   SmartPointer(T* p = NULL) : Pointer<T>(p)
    {
-       m_pointer = p;
+
    }
 
     SmartPointer(const SmartPointer<T>& obj)
     {
-        m_pointer = obj.m_pointer;
+        this->m_pointer = obj.m_pointer;
         const_cast<SmartPointer<T>&>(obj).m_pointer = NULL;
     }
 
@@ -25,38 +26,21 @@ public:
     {
         if (this != &obj)
         {
-            delete m_pointer;
-            m_pointer = obj.m_pointer;
+            T* p = m_pointer; // 异常安全
+
+            this->m_pointer = obj.m_pointer;
+
             const_cast<SmartPointer<T>&>(obj).m_pointer = NULL;
+
+            delete p;
         }
 
         return *this;
     }
 
-    bool isNull()
-    {
-        return (m_pointer == NULL);
-    }
-
-    T* get()
-    {
-        return m_pointer;
-    }
-
-    T& operator*()
-    {
-        return *m_pointer;
-    }
-
-    T* operator->()
-    {
-        return m_pointer;
-    }
-
     ~SmartPointer()
     {
-        delete m_pointer;
-        m_pointer = NULL;
+        delete this->m_pointer;
     }
 
 protected:

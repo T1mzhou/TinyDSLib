@@ -3,6 +3,7 @@
 
 #include "List.h"
 #include "Exception.h"
+// #include "SmartPointer.h"
 
 
 namespace DSLib
@@ -22,7 +23,8 @@ public:
 
     Node* position(int i) const
     {
-         Node* current = reinterpret_cast<Node*>(&m_header);
+        Node* current = reinterpret_cast<Node*>(&m_header);
+        //SmartPointer<Node> current =  reinterpret_cast<Node*>(&m_header);
             
         for (int p = 0; p < i; p++)
         {
@@ -140,9 +142,10 @@ public:
     {
         int ret = -1;
         int i = 0;
+        
         Node* node = m_header->next;
 
-        while ( node )
+        while ( node.isNull() )
         {
             if ( node->value == e )
             {
@@ -164,6 +167,8 @@ public:
         while ( m_header.next )
         {
             Node *toDel = m_header.next;
+            // SmartPointer<Node> toDel = m_header.next;
+
             m_header.next = toDel->next;
             
             m_length--;     // fixbug 异常安全
@@ -187,6 +192,7 @@ public:
     bool end()
     {
         return (m_current == NULL);
+        // return m_current.isNull();
     }
 
     T current()
