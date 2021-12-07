@@ -67,6 +67,7 @@ protected:
             {
                 m_used[i] = 0;
                 psn->~SNode();
+                break;          // impove efficiency
             }
         }
     }
