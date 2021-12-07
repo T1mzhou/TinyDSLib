@@ -73,6 +73,12 @@ public:
             Node* current = position(i);
 
             Node* toDel = current->next;
+
+            if ( m_current == toDel )
+            {
+                m_current = toDel->next;    // fixbug修改游标指向合法的数据
+            }
+
             current->next = toDel->next;
 
             m_length--; // fix bug add 异常安全性
