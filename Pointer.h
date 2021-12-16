@@ -12,7 +12,18 @@ public:
         m_pointer = p;
     }
 
-    T* operator-> (){
+    T* operator-> ()
+    {
+        return m_pointer;
+    }
+
+    const T& operator* () const
+    {
+        return *m_pointer;
+    }
+
+    const T* operator-> () const 
+    {
         return m_pointer;
     }
 
@@ -20,11 +31,13 @@ public:
     {
         return *m_pointer;
     }
-    bool isNull()
+
+    bool isNull() const 
     {
         return (m_pointer == NULL);
     }
-    T* get()
+    
+    T* get() const 
     {
         return m_pointer;
     }
