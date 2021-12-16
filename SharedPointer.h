@@ -87,15 +87,15 @@ protected:
 };
 
 template < typename T >
-bool operator == (const SharedPointer<T>& lhr, const SharedPointer<T>& rhs)
+bool operator == (const SharedPointer<T>& lhs, const SharedPointer<T>& rhs)
 {
-    return (lhr.get() == rhs.get());
+    return (lhs.get() == rhs.get());
 }
 
 template < typename T >
-bool operator != (const SharedPointer<T>& lhr, const SharedPointer<T>& rhs)
+bool operator != (const SharedPointer<T>& lhs, const SharedPointer<T>& rhs)
 {
-    return (lhr.get() != rhs.get());
+    return (lhs.get() != rhs.get());
 }
 
 }
