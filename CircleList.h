@@ -7,7 +7,7 @@
 namespace DSLib
 {
 
-template <typename T>
+template < typename T >
 class  CircleList : public LinkList<T>
 {
 public:

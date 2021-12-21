@@ -1,100 +1,100 @@
-#ifndef __LINKLIST_H__
-#define __LINKLIST_H__
+#ifndef __DUALINKLIST_H__
+#define __DUALINKLIST_H__
 
-#include "List.h"
-#include "Exception.h"
-// #include "SmartPointer.h"
-
+#include "LinkList.h"
 
 namespace DSLib
 {
-
 template < typename T >
-class LinkList : public List<T>
+
+class DualLinkList : public List<T>
 {
+
 public:
-    LinkList()
+    DualLinkList()
     {
-        m_header->next = NULL;
+        m_header.next = NULL;
+        m_header.pre = NULL;
         m_length = 0;
-        m_current = NULL;
         m_step = 1;
+        m_current = NULL;
     }
 
-    Node* position(int i) const
+    bool insert(const T& e) 
     {
-        Node* current = reinterpret_cast<Node*>(&m_header);
-        //SmartPointer<Node> current =  reinterpret_cast<Node*>(&m_header);
-            
-        for (int p = 0; p < i; p++)
-        {
-            current = current->next;
-        }
-
-        return current;
+        return insert(m_length, e);
     }
 
-    bool insert(const T& e)
+    bool insert(const int i, const T& e)
     {
-        insert(m_length, e);
-    }
-
-    bool insert(int i, const T& e)
-    {
-        bool ret = ((0 <= i)  && (i <= m_length));
+        bool ret = ((0 <= i) && (i <= m_length));
 
         if ( ret )
         {
             Node* node = create();
-
-            if ( node != NULL)
+            if ( node != NULL )
             {
                 Node* current = position(i);
-
+                Node* next = current->next;
+                
                 node->value = e;
-                node->next = current->next; // 可能从不同的地方插入
+
+                node->next = next;
                 current->next = node;
+                
+                if ( current != reinterpret_cast<Node*>(&m_header))
+                {
+                    node->pre  = current;
+                }
+                else
+                {
+                    node->pre = NULL;
+
+                }
+
+                if ( next != NULL )
+                {
+                    next->pre = node;
+                }
 
                 m_length++;
             }
             else
             {
-                THROW_EXCEPTION(NoEnoughMemoryException, "No memory to insert new element ...");
+                HROW_EXCEPTION(NoEnoughMemoryException, "No memory to insert new element ...");
             }
         }
-
-        return ret;
     }
 
     bool remove(int i)
     {
-        bool ret = (0 <= i) && (i < m_length); // different
+         bool ret = ((0 <= i) && (i < m_length));
 
-        if ( ret )
-        {
+         if ( ret )
+         {
             Node* current = position(i);
-
             Node* toDel = current->next;
+            Node* next = toDel->next;
 
             if ( m_current == toDel )
             {
-                m_current = toDel->next;    // fixbug修改游标指向合法的数据
+                m_current = next;
             }
 
-            current->next = toDel->next;
+            current->next = next;
 
-            m_length--; // fix bug add 异常安全性
+            if ( next != NULL )
+            {
+                next->pre = current;
+            }
+
+            m_length--;
+            
             destroy(toDel);
-
-            // m_length--;
-
-           
-        }
-
-        return ret;
+         }
     }
 
-    bool set(int i, const T& e)
+     bool set(int i, const T& e)
     {
         bool ret = (0 <= i) && (i < m_length); // different
 
@@ -161,24 +161,16 @@ public:
 
         return ret;
     }
-    
+
     void clear()
     {
-        while ( m_header.next )
+        while ( m_length > 0 )
         {
-            Node *toDel = m_header.next;
-            // SmartPointer<Node> toDel = m_header.next;
-
-            m_header.next = toDel->next;
-            
-            m_length--;     // fixbug 异常安全
-            destroy(toDel);
+            remove(0);
         }
-
-        // m_length = 0;
     }
 
-    virtual bool move(int i, int step = 1)
+     virtual bool move(int i, int step = 1)
     {
         bool ret = ((0 <= i) && (i < length()) && (step >= 0));
 
@@ -223,40 +215,61 @@ public:
         return (i == m_step);  
     }
 
-    ~LinkList()
+    virtual bool pre()
     {
-       clear();
+        int i = 0;
+
+        while ( (i < m_step) &&  !end() )
+        {
+            m_current = m_current->pre;
+            i++;
+        }
+
+        return (i == m_step);  
     }
 
+    ~DualLinkList()
+    {
+        clear();
+    }
+    
 protected:
+    Node* position(int i) const
+    {
+        Node* ret = reinterpret_cast<Node*>(&m_header);
+
+        for (int p = 0; p < i; p++)
+        {
+            ret = ret->next;
+        }
+
+        return ret;
+    }
+
     virtual Node* create()
     {
         return new Node();
     }
 
-    virtual void destroy(Node* pn)
+    virtual void destory(Node* pn)
     {
         delete pn;
     }
 
 protected:
-    struct Node : public Object
-    {
+    struct Node : public Object {
         T value;
         Node* next;
+        Node* pre;
     };
 
-    mutable struct : public Object // const成员函数中取地址
-    {
-        char reserved[sizeof(T)]; // 内存布局相同
+    mutable struct : public Object {
+        char reserved[sizeof(T)];
         Node* next;
-    } m_header;                   
-
-    Node* m_current;
-    int   m_step;
-
-    int m_length;  
+        Node* pre;
+    }m_header;
 };
 
 }
-#endif // !__LINKLIST_H__
+
+#endif // !__DUALINKLIST_H__

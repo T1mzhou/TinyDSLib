@@ -9,7 +9,6 @@ using namespace DSLib;
 
 int main()
 {
-   SeqList<int>* l;
-
+    SeqList<int>* l;
     return 0;
 }
