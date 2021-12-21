@@ -2,6 +2,7 @@
 #define __DUALINKLIST_H__
 
 #include "LinkList.h"
+#include "Exception.h"
 
 namespace DSLib
 {
@@ -232,7 +233,7 @@ public:
     {
         clear();
     }
-    
+
 protected:
     Node* position(int i) const
     {
