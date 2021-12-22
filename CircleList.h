@@ -42,7 +42,7 @@ public:
         {
             Node* toDel = this->m_header.next;
 
-            if ( toDel != NULL)
+            if ( toDel != NULL )
             {
                 this->m_header.next = toDel->next;
                 this->m_length--;

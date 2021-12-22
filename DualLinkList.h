@@ -163,7 +163,7 @@ public:
         return ret;
     }
 
-    void clear()
+    virtual void clear()
     {
         while ( m_length > 0 )
         {
