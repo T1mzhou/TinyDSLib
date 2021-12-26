@@ -40,10 +40,22 @@ public:
     String& operator = (const char* s);
     String& opearator = (char c);
 
+    char& operator [](size_t i);
+    char opearor [](size_t i) const;
+    bool startWith(const String& s);
+    bool startWith(const char* s);
+    bool endOf(const String& s);
+    bool endOf(const char* s);
+    String& insert(int i, const String& s);
+    String& insert(int i, const char* s);
+    String& trim();
+
+
     ~String();
 
 protected:
     void init(const char* s);
+    bool equal(const char* l, const char* r, int len) const;
 protected:
     char* m_str;
     int m_length;
