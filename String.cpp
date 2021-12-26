@@ -267,8 +267,6 @@ bool String::endOf(const char* s)
     
 String& String::insert(int i, const char* s)
 {
-    bool ret = true;
-
     if ( (0 <= i) && (i <= m_length) )
     {
         if ( (s != NULL) && (s[0] != '\0') )
