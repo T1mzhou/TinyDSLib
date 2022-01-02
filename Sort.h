@@ -52,6 +52,56 @@ public:
             }
         }
     }
+
+    template < typename T>
+    static void Bubble(T array[], int len, bool min2max = true)
+    {
+        bool exchange = true;
+
+        for (int i = 0; i < len && exchange; i++)
+        {
+            exchange = false;
+
+            for (int j = len - 1; j > i; j--)
+            {
+                if ( array[j] < array[j - 1] )
+                {
+                    Swap(array[j], array[j - 1]);
+                    exchange = true;
+                }
+            }
+        }
+    }
+
+    template < typename T>
+    static void Shell(T array[], int len, bool min2max = true)
+    {
+        int d = len;
+
+        do
+        {
+            d = d / 3 + 1; // 数字推到出来的比较好的选择值
+
+            for (int i = d; i < len; i++)
+            {
+                int k = i;
+                T e = array[i];
+
+                for (int j = i - d; (j >= 0) && (min2max ? (array[j] > e) : (array[j] < e)); j -= d)
+                {
+                    array[j + d] = array[j];
+                    k = j;
+                }
+
+                if ( k != i )
+                {
+                    array[k] = e;
+                }
+            }
+
+        } while (d > 1);
+        
+    }
 private:
     Sort();
     Sort(const Sort&);
