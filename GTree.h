@@ -67,12 +67,36 @@ public:
 
     virtual SharedPointer< Tree<T> > remove(const T& value)
     {
+        GTree<T>* ret = NULL;
+        GTreeNode<T>* node = find(value);
 
+        if ( node == NULL )
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Can not find the node via paramter value ...");
+        }
+        else
+        {
+            remove(node, ret);
+        }
+
+        return ret;
     }
 
     virtual SharedPointer< Tree<T> > remove(TreeNode<T>* node)
     {
+        GTree<T>* ret = NULL;
+        node = find(node);
 
+        if ( node == NULL )
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Can not find the node via node ...");
+        }
+        else
+        {
+            remove(dynamic_cast<GTreeNode<T>*>node, ret);
+        }
+
+        return ret;
     }
 
  
@@ -179,6 +203,33 @@ protected:
         if ( node->flag() )
         {
             delete node; // 需要判断是否是堆里面的空间
+        }
+    }
+
+    void remove(GTreeNode<T>* node, GTreeNode<T>*& ret)
+    {
+        ret = new GTree<T>();
+
+        if ( ret == NULL )
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No memory to create new tree");
+        }
+        else
+        {
+            if ( root() == node )
+            {
+                this->m_root = NULL;
+            }
+            else
+            {
+                LinkList<GTreeNode<T>*>& child = dynamic_cast<GTreeNode<T>*>(node->parent)->child;
+                
+                child.remove(child.find(node));
+
+                node->parent = NULL;
+            }
+
+            ret->m_root = node;
         }
     }
 
