@@ -50,7 +50,7 @@ public:
     virtual bool insert(const T& value, TreeNode<T>* parent)
     {
         bool ret = true;
-        GTreeNode<T>* node = new GTreeNode<T>();
+        GTreeNode<T>* node = GTreeNode<T>::NewNode();
 
         if ( node != NULL )
         {
@@ -109,7 +109,8 @@ public:
 
     virtual void clear() 
     {
-        this->root = NULL;
+        free(root());
+        delete m_root;
     }
 
     ~GTreeNode()
@@ -163,6 +164,23 @@ protected:
         return ret;
     }
 
+    void free(GTreeNode<T>* node)
+    {
+        if ( node == NULL )
+        {
+            return ;
+        } 
+
+        for (node->child.move(0); !node->child.end(); node->child.next())
+        {
+            free(node->child.current());
+        }
+
+        if ( node->flag() )
+        {
+            delete node; // 需要判断是否是堆里面的空间
+        }
+    }
 
 };
 
