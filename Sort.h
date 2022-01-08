@@ -121,6 +121,7 @@ public:
     {
        Quick(array, 0, len, true);
     }
+    
 private:
     Sort();
     Sort(const Sort&);

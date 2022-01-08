@@ -34,6 +34,8 @@ public:
 public:
     LinkList<GTreeNode<T>*> child;
 protected:
+    GTreeNode(const GTreeNode<T>&);
+    GTreeNode<T>& operator = (const GTreeNode<T>&);
     void* operator new(unsigned int size) throw()
     {
         return Object::operator new(size);

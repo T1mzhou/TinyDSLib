@@ -3,6 +3,8 @@
 
 #include "Tree.h"
 #include "GTreeNode.h"
+#include "LinkQueue.h"
+#include "Exception.h"
 
 namespace DSLib
 {
@@ -94,6 +96,8 @@ public:
         else
         {
             remove(dynamic_cast<GTreeNode<T>*>node, ret);
+
+            m_queue.clear();
         }
 
         return ret;
@@ -132,8 +136,62 @@ public:
     virtual void clear() 
     {
         free(root());
-        delete m_root;
+        
+        this->m_root = NULL;
+
+        m_queue.clear();
     }
+
+    bool begin()
+    {
+        bool ret = (root() != NULL);
+
+        if ( ret )
+        {
+            m_queue.clear();
+            m_queue.add(root());
+
+        }
+
+        return ret;
+    }
+
+    bool end()
+    {
+        return (m_queue.length() == 0);
+    }
+
+    bool next()
+    {
+        bool ret = (m_queue.m_length() > 0);
+
+        if ( ret )
+        {
+            GTreeNode<T>* node = m_queue.front();
+
+            m_queue.remove();
+
+            for (node->child.move(0); !node->child.end(); node->child.next())
+            {
+                m_queue.add(node->child.current());
+            }
+        }
+
+        return ret;
+    }   
+
+    T current()
+    {
+        if ( !end() )
+        {
+            return m_queue.front()->value;
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidOperationException, "No value at current position ....");
+        }
+    }
+
 
     ~GTreeNode()
     {
@@ -141,6 +199,12 @@ public:
     }
 
 protected:
+    LinkList<GTreeNode<T>*> m_queue;
+
+protected:
+    GTree(const GTree<T>& );
+    GTree<T>& operator = (const GTree<T>& );
+
     GTreeNode<T>* find(GTreeNode<T>* node, const T& value) const
     {   
         GTreeNode<T>* ret = NULL;
