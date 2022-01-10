@@ -70,6 +70,8 @@ public:
         else
         {
             remove(node ret);
+
+            m_queue.clear();
         }
         
         return ret;
@@ -88,6 +90,8 @@ public:
         else
         {
             remove(dynamic_cast<BTreeNode<T>*>(node), ret);
+            
+            m_queue.clear();
         }
 
         return ret;
@@ -126,8 +130,65 @@ public:
     void clear() 
     {
         free(root());
+        m_queue = NULL;
         this->m_root = NULL;
     }
+
+    bool begin()
+    {
+        bool ret = (root() != NULL);
+
+        if ( ret )
+        {
+            m_queue.clear();
+            m_queue.add(root());
+
+        }
+
+        return ret;
+    }
+
+    bool end()
+    {
+        return (m_queue.length() == 0);
+    }
+
+    bool next()
+    {
+        bool ret = (m_queue.m_length() > 0);
+
+        if ( ret )
+        {
+            GTreeNode<T>* node = m_queue.front();
+
+            m_queue.remove();
+
+            if ( node->left )
+            {
+                m_queue.add(node->left);
+            }
+
+            if ( node->right )
+            {
+                m_queue.add(node->right);
+            }
+        }
+
+        return ret;
+    }   
+
+    T current()
+    {
+        if ( !end() )
+        {
+            return m_queue.front()->value;
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidOperationException, "No value at current position ....");
+        }
+    }
+
 
     ~BTree()
     {
@@ -221,6 +282,7 @@ protected:
         }
         return ret;
     }
+
     virtual insert(BTreeNode<T>* n, BTreeNode<T>* np, BTNodePos pos)
     {
         bool ret = true;
@@ -403,6 +465,9 @@ protected:
 
         return ret;
     }
+
+protected:
+    LinkQueue<BTreeNode<T>*> m_queue;
 };
 
 
