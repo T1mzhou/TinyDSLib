@@ -60,12 +60,37 @@ public:
 
     SharedPointer< Tree<T> > remove(const T& value) 
     {
+        Tree<T>* ret = NULL;
+        BTreeNode<T>* node = find(value);
 
+         if ( node == NULL )
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Can not find the tree node via value ....");
+        }
+        else
+        {
+            remove(node ret);
+        }
+        
+        return ret;
     }
 
     SharedPointer< Tree<T> > remove(BTreeNode<T>* node) 
     {
+        Tree<T>* ret = NULL;
 
+        node = find(node);
+
+        if ( node == NULL )
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Parameter node is invalid ....");
+        }
+        else
+        {
+            remove(dynamic_cast<BTreeNode<T>*>(node), ret);
+        }
+
+        return ret;
     }
 
     BTreeNode<T>* find(const T& value) const
@@ -85,21 +110,22 @@ public:
 
     int degree() const 
     {
-
+        return degree(root());
     }
 
     int count() const 
     {
-
+        return (node != NULL) ? (count(node->left) + count(node->right) + 1) : 0;
     }
 
     int height() const 
     {
-
+        return height(root());
     }
 
     void clear() 
     {
+        free(root());
         this->m_root = NULL;
     }
 
@@ -240,7 +266,143 @@ protected:
         {
             ret = false;
         }
-    }   
+    }
+    
+    virtual void remove(BTreeNode<T>* node, BTree<T>*& ret)
+    {
+        ret = new BTree<T>();
+
+        if ( ret == NULL )
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No memory to create new tree ...");
+        }
+        else
+        {
+            if ( root() == node )
+            {
+                this->root = NULL;
+            }
+            else
+            {
+                BTreeNode<T>* parent = dynamic_cast<BTreeNode<T>*>(node->parent());
+
+                if ( parent->left == node )
+                {
+                    parent->left = NULL;
+                }
+                else if ( parent->right == node )
+                {
+                    parent->right = NULL;
+                }
+
+                node->parent = NULL;
+            }
+
+            ret->m_root = node;
+        }
+    }
+
+    virtual void free(BTreeNode<T>* node)
+    {
+        if ( node != NULL )
+        {
+            free(node->left);
+            free(node->right);
+
+            if ( node->flag() )
+            {
+                delete node;
+            }
+
+        }
+    }
+
+    virtual int count(BTreeNode<T>* node) const
+    {
+        int ret = 0;
+
+        if ( node != NULL )
+        {
+            ret = count(node->left) + count(node->right) + 1;
+        }
+
+        return ret;
+    }
+
+    virtual int height(BTreeNode<T>* node) const 
+    {
+        int ret = 0;
+
+        if ( node != NULL )
+        {
+            int lh = heiget(node->left);
+            int rh = height(node->right);
+
+            ret = ((lh > rh) ? lh : rh) + 1;
+        }
+
+        return ret;
+    }
+
+    virtual int degree(BTreeNode<T>* node) const
+    {
+        int ret = 0;
+
+        if ( node != NULL )
+        {
+            // int dl = degree(node->left);
+            // int dr = degree(node->right);
+
+            // ret = (!!node->left + !!node->right);
+
+            // if ( ret < dl )
+            // {
+            //     ret = dl;
+            // }
+
+            // if ( ret < dr )
+            // {
+            //     ret = dr;
+            // }
+
+            // ret = (!!node->left + !!node->right);
+
+            // if ( ret  < 2 )
+            // {
+            //     int dl = degree(node->left);               
+
+            //     if ( ret < dl )
+            //     {
+            //         ret = dl;
+            //     }
+            // }
+
+            // if ( ret < 2 )
+            // {
+            //     int dr = degree(node->right);
+                
+            //     if ( ret < dr )
+            //     {
+            //         ret = dr;
+            //     }
+            // }
+            ret = (!!node->left + !!node->right);
+            BTreeNode<T>* child[] = { node->left, node->right };
+
+            for (int i = 0; ( i < 2 ) && ( ret < 2 ) ; i++)
+            {
+                int d = degree(child[i]);
+
+                if ( ret < d )
+                {
+                    ret = d;
+                }
+            }
+
+        }
+
+        return ret;
+    }
 };
 
 
