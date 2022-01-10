@@ -28,6 +28,10 @@ public:
     virtual void clear() = 0;
 
 protected:
+    Tree(const Tree<T>&);
+    Tree<T>& operator = (const Tree<T>&);
+    
+protected:
     TreeNode<T>* m_root;
 };
 }

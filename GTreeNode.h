@@ -11,16 +11,6 @@ template< typename T >
 class GTreeNode : public TreeNode<T>
 {
 public:
-    GTreeNode()
-    {
-        m_flag = false;
-    }
-
-    bool flag()
-    {
-        return m_flag;
-    }
-    
     static GTreeNode<T>* NewNode()
     {
         GTreeNode<T>* ret = new GTreeNode<T>();
@@ -33,15 +23,7 @@ public:
 
 public:
     LinkList<GTreeNode<T>*> child;
-protected:
-    GTreeNode(const GTreeNode<T>&);
-    GTreeNode<T>& operator = (const GTreeNode<T>&);
-    void* operator new(unsigned int size) throw()
-    {
-        return Object::operator new(size);
-    }
-
-    bool m_flag;
+ 
 };
 
 }
