@@ -21,7 +21,8 @@ enum BTTraversal
 {
     PreOrder,
     InOrder,
-    PostOrder
+    PostOrder,
+    LevelOrder
 };
 template < typename T >
 class BTree : public Tree<T>
@@ -202,21 +203,7 @@ public:
         DynamicArray<T>* ret = NULL;
         LinkQueue<BTreeNode<T>*> queue;
 
-        switch (order)
-        {
-        case PreOrder:
-            preOrderTraversal(root(), queue);
-            break;
-        case InOrder:
-            inOrderTraversal(root(), queue);
-            break;
-        case PostOrder:
-            postOrderTraversal(root(), queue);
-            break;
-        default:
-            THROW_EXCEPTION(InvalidParameterException, "Parameter order is invalid ...");
-            break;
-        }
+        traversal(order, queue);
 
         ret = new DynamicArray<T>(queue.length());
 
@@ -277,6 +264,21 @@ public:
         return ret;
     }
 
+    BTreeNode<T>* thread(BTTraversal order)
+    {
+        BTreeNode<T>* ret = NULL;
+        LinkQueue<BTreeNode<T>*> queue;
+
+        traversal(order, queue);
+
+        connect(queue);
+
+        this->root = NULL;
+        m_queue.clear();
+
+        return ret;
+    }
+
     ~BTree()
     {
         clear();
@@ -289,7 +291,7 @@ protected:
 
         if ( node != NULL )
         {
-            if ( node->value == value)
+            if ( node->value == value )
             {
                 ret = node;
             }
@@ -583,6 +585,35 @@ protected:
         }
     }
 
+    void levelOrderTraversal(BTreeNNode<T>* node, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        if ( node != NULL )
+        {
+            LinkQueue<BTreeNode<T>*> tmp;
+
+            tmp.add(root());
+
+            while ( tmp.length() > 0 )
+            {
+                BTreeNode<T>* n = tmp.front();
+
+                if ( n->left != NULL )
+                {
+                    tmp.add(n->left);
+                }
+
+                if ( n->right != NULL )
+                {
+                    tmp.add(n->right);
+                }
+
+                tmp.remove();
+                queue.add(n);
+
+            }
+        }
+    }
+
     BTreeNode<T>* clone(BTreeNode<T>* node) const
     {
         BTreeNode<T>* ret = NULL;
@@ -673,6 +704,63 @@ protected:
             }
         }
     }
+
+    void traversal(BTTraversal order, LinkQueue<BTreeNode<T>*> queue)
+    {
+        if ( node != NULL )
+        {
+            switch (order)
+            {
+            case PreOrder:
+                preOrderTraversal(root(), queue);
+                break;
+            case InOrder:
+                inOrderTraversal(root(), queue);
+                break;
+            case PostOrder:
+                postOrderTraversal(root(), queue);
+                break;
+            case LevelOrder:
+                levelOrderTraversal(root(), queue);
+                break;
+            default:
+                THROW_EXCEPTION(InvalidParameterException, "Parameter order is invalid ...");
+                break;
+            }
+        }
+    }
+
+    BTreeNode<T>* connect(LinkQueue<BTreeNode<T>*>& queue)
+    {
+        BTreeNode<T>* ret = NULL;
+
+        if ( queue.length() > 0 )
+        {
+            ret = queue.front();
+
+            BTreeNode<T>* slider = queue.front();
+
+            queue.remove();
+
+            slider->left = NULL;
+
+            while ( queue.length() > 0 )
+            {
+                slider->right = queue.front();
+                queue.front()->left = slider;
+                slider = queue.front();
+                queue.remove();
+            }
+
+            slider->right = NULL;
+        }
+
+
+        return ret;      
+    }
+
+
+    
 
 protected:
     LinkQueue<BTreeNode<T>*> m_queue;
