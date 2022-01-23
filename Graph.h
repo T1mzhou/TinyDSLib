@@ -7,6 +7,36 @@
 
 namespace DSLib
 {
+template< typenam  E >
+struct Edge : public Obejct
+{
+    int b;
+    int e;
+    E   data;
+
+    Edge(int i = -1; int j = -1)
+    {
+        b = i;
+        e = j;
+    }
+
+    Edge(int i, int j, const E& value)
+    {
+        b = i;
+        e = j;
+        data = value;
+    }
+
+    bool operator == (const Edge<E>& obj)
+    {
+        return (b == obj.b) && (e == obj.e);
+    }
+
+    bool operator != (const Edge<E>& obj)
+    {
+        return !(*this == obj);
+    }
+};
 
 template < typename V, typename E >
 class Graph : public Object
