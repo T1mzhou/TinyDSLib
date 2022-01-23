@@ -81,7 +81,7 @@ public:
         }
         else
         {
-             THROW_EXCEPTION(InvalidOperationException, "index i is invalid ....");
+             THROW_EXCEPTION(InvalidParameterException, "index i is invalid ....");
         }
 
         return ret;
@@ -93,7 +93,7 @@ public:
 
         if ( !getVertex(i, ret) )
         {
-            THROW_EXCEPTION(InvalidOperationException, "index i is invalid ....");
+            THROW_EXCEPTION(InvalidParameterException, "index i is invalid ....");
         }
 
         return ret;
@@ -173,10 +173,161 @@ public:
         }
         else
         {
-            THROW_EXCEPTION(InvalidOperationException, "Index i is invalid ....");
+            THROW_EXCEPTION(InvalidParameterException, "Index i is invalid ....");
         }
 
         return ret;
+    }
+
+    E getEdage(int i, int j)
+    {
+        E ret;
+
+        if ( !getEdge(i, j, ret) )
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index  i or  j  is invalid ....");
+        }
+
+        return ret;
+    }
+
+    E getEdge(int i, int j, E& value)
+    {
+        int ret = ( (0 <= i) && (i < vCount()) &&
+                    (0 <= j) & (j < vCount()) );
+
+        if ( ret )
+        {
+            Vertex* vertex = m_list.get(i);
+            int pos = Vertex->edge.find(Edge<E>i(i, j));
+
+            if ( pos >= 0 )
+            {
+                value = Vertex->edge.get(pos).data;
+            }
+            else
+            {
+                THROW_EXCEPTION(InvalidOperationException, "No value assigned to this edge ....");
+            }
+        }
+
+        return ret;
+    }
+
+    bool setEdge(int i, int j, const E& value)
+    {
+        int ret = ( (0 <= i) && (i < vCount()) &&
+                    (0 <= j) && (j < vCount()) );
+
+        if ( ret )
+        {
+            Vertex* vertex = m_list.get(i);
+            int pos = vertex->edge.find(Edge<E>(i, j));
+
+            if ( pos >= 0 )
+            {
+                ret = vertex->edage.set(pos, Edge<E>(i, j, value));
+            }
+            else
+            {
+                ret = vertex->edge.insert(0, Edge<e>(i, j, value));
+            }
+        }
+
+        return ret;
+    }
+
+    bool removeEdge(int i, int j)
+    {
+         int ret = ( (0 <= i) && (i < vCount()) &&
+                    (0 <= j) && (j < vCount()) );
+        
+        if ( ret )
+        {
+            Vertex* vertex = m_list.get(i);
+            int pos = vertex->edge.find(Edge<E>(i, j));
+
+            if (pos >= 0 )
+            {
+                ret = vertex->edge.remove(pos);
+            }
+        }
+
+        return ret;
+    }
+
+    int vCount()
+    {
+        return m_list.length();
+    }
+
+    int eCount()
+    {
+        int ret = 0;
+
+        for (m_list.move(0); !m_list.end(); m_list.next())
+        {
+            ret += m_list.current()->edge.lengt();
+        }
+
+        return ret;
+    }
+
+    int ID(int i)
+    {
+        int ret = 0;
+
+        if ( (0 <= i) && (i < vCount()) )
+        {
+            for (m_list.move(0); !m_list.end(); m_list.next())
+            {
+                LinkList< Edge<E> >& edge = m_list.current()->edge;
+
+                for (edge.move(0); !edge.end(); edge.next(())
+                {
+                    if ( edge.current().e == i )
+                    {
+                        ret++;
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index i is invalid ....");
+        }
+
+        return ret;
+    }
+
+    int OD(int i)
+    {
+        int ret = 0;
+
+        if ( (0 <= i) && (i < vCount()) )
+        {
+           ret = m_list.get(i)->edge.length();
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index i is invalid ....");
+        }
+
+        return ret;
+    }
+
+    ~LinkGraph()
+    {
+        while ( m_list.length() > 0 )
+        {
+            Vertex* toDel = m_list.get(0);
+
+            m_list.remove(0);
+
+            delete toDel->data;
+            delete toDel;
+        }
     }
 
 protected:
