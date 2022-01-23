@@ -62,27 +62,6 @@ public:
     {
         bool ret = ( (0 <= i ) && (i < vCount()) ) ;
 
-        // if ( ret )
-        // {
-        //     if ( m_vertexes[i] != NULL )
-        //     {
-        //         *(m_vertexes[i]) = value;
-        //     }
-        //     else
-        //     {
-        //         m_vertexes[i] = new V();
-                
-        //         if ( m_vertexes[i] != NULL )
-        //         {
-        //             *(m_vertexes[i]) = value;
-        //         }
-        //         else
-        //         {
-        //             THROW_EXCEPTION(NoEnoughMemoryException, "No memeory to store new vertex value ....");
-        //         }                
-        //     }
-        // }
-
         if ( ret )
         {
             V* data = m_vertexes[i];

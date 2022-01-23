@@ -2,8 +2,12 @@
 #define __GRAPH_H__
 
 #include "Object.h"
+#include "LinkStack.h"
 #include "Array.h"
+#include "LinkQueue.h"
+#include "DynamicArray.h"
 #include "SharedPointer.h"
+#include "Exception.h"
 
 namespace DSLib
 {
@@ -58,6 +62,160 @@ public:
     virtual int TD(int i)
     {
         return OD(i) + ID(i);
+    }
+
+    SharedPointer< Array<int> > BFS(int i)
+    {
+        DynamicArray<int> ret = NULL;
+
+        if ( (0 <= i) && ( i < vCount()) )
+        {
+            LinkQueue<int> q;
+            LinkQueue<int> r;
+
+            DynamicArray<bool> visited(vCount());
+
+            for (int j = 0; j < visited.lenght(); j++)
+            {
+                visited[j] = false;
+            }
+
+            q.add(i);
+
+            while ( q.length() > 0 )
+            {
+                int v = q.front();
+
+                q.remove();
+
+                if ( !visited[v] )
+                {
+                    SharedPointer< Array<int> > aj = getAdjacent(v);
+
+                    for (int j = 0; j < aj->length(); j++)
+                    {
+                        q.add((*aj)[j]);
+                    }
+
+                    r.add(v);
+
+                    visited[v] = true;
+                }
+            }
+
+            ret = toArray(r);
+
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index i is valid ....");
+        }
+
+        return ret;
+    }
+
+    SharedPointer< Array<int> > DFS(int i)
+    {
+        DynamicArray<int>*ret = NULL;
+
+        if ( (0 <= i) && ( i < vCount()) )
+        {
+            LinkStack<int> s;
+            LinkQueue<int> r;
+            DynamicArray<bool> visited(vCount());
+
+            for (int j = 0; j < visited.lenght(); j++)
+            {
+                visited[j] = false;
+            }
+
+            s.push(i)
+
+            while ( s.size() > 0 )
+            {
+                int v = s.top();
+
+                s.pop();
+
+                if ( !visited[v] )
+                {
+                    SharedPointer< Array<int> > aj = getAdjacent(v);
+
+                    for (int j = aj->length() - 1; j >= 0; j--)
+                    {
+                        s.push((*aj)[j]);
+
+                    }
+
+                    r.add(v);
+
+                    visited[v] = true;
+                }
+            }
+
+            ret = toArray(r);
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index i is invalid ....");
+        }
+
+        return ret;
+    }
+
+    template < typename V, typename E >
+    void recursiveDFS(Graph<V, E>& g, int v) recursion
+    {
+        DynamicArray<bool> visited(g.vCount());
+
+        for (int i = 0; i < visited.length(); i++)
+        {
+            visited[i] = false;
+        }
+    }
+
+protected:
+    template < typname T >
+    DynamicArray<T>* toArray(LinkQueue<T>& queue)
+    {
+        DynamicArray<T*> ret = new DynamicArray<T>(queue.lenght());
+
+        if ( ret != NULL )
+        {
+            for (int i = 0; i < ret->lenght(); i++, queue.remove())
+            {
+                ret->set(i, queue.front());
+            }
+        }
+        else
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No memory to create ret object ....");    
+        }
+    }
+
+    template < typename V, typename E >
+    void recursiveDFS(Graph<V, E>& g, int v, Array<bool>& visited)
+    {
+        if ( (0 <= v) && (v < g.vCount()) )
+        {
+            std::cout << v << std::endl;
+
+            visited[i] = true;
+
+            SharedPointer< Array<int> > aj = g.getAdjacent();
+
+            for (int i = 0; i < aj->length(); i++)
+            {
+                if ( !visited[(*aj)[i]] )
+                {
+                    DFS(g, (*aj)[i], visited);
+                }
+            }
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index v is invalid ....");
+        }
     }
 };
 

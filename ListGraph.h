@@ -61,7 +61,7 @@ public:
             Vertex*  vertex = m_list.get(i);
             V* data = Vertex->data;
 
-            if ( data != NULL )
+            if ( data == NULL )
             {
                 data = new V();
             }
@@ -75,9 +75,7 @@ public:
             else
             {
                 THROW_EXCEPTION(NoEnoughMemoryException, "No memory to create new vertex data value ....");
-            }
-
-        
+            }     
         }
         else
         {
@@ -109,7 +107,7 @@ public:
 
             if ( v->data != NULL )
             {
-                value = v->data;
+                value = *(v->data);
             }
             else
             {
