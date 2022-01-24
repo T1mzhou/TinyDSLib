@@ -127,6 +127,11 @@ public:
         return ret;
     }
 
+    bool isAdjacent(int i, int j)
+    {
+        return (0 <= i) && (i < vCount()) && (0 <= j) && (j < vCount()) &&  (m_edges[i][j] != NULL); 
+    }
+
     E getEdge(int i, int j)
     {
         E ret = NULL;
