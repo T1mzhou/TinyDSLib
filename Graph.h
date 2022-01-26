@@ -6,6 +6,7 @@
 #include "Array.h"
 #include "LinkQueue.h"
 #include "DynamicArray.h"
+#include "Sort.h"
 #include "SharedPointer.h"
 #include "Exception.h"
 
@@ -39,6 +40,16 @@ struct Edge : public Obejct
     bool operator != (const Edge<E>& obj)
     {
         return !(*this == obj);
+    }
+
+    bool operator < (const Edges<E>& obj)
+    {
+        return (data < obj.data);
+    }
+
+     bool operator > (const Edges<E>& obj)
+    {
+        return (data > obj.data);
     }
 };
 
@@ -83,6 +94,42 @@ public:
 
         return ret;
     }
+
+    SharedPointer < Array< Edge<E> > >  kruskal(const bool MINIMUM = true)
+    {
+        LinkQueue< Edge<E> > ret;
+        SharedPointe< Array< Edge<E> > > edges = getUndirectedEdges();
+        DynamicArray<int> p(vCount());
+
+        for (int i = 0; i < p.length(); i++)
+        {
+            p[i] = -1;
+        }
+
+        Sort::Shell(*edges, MINIMUM);
+        
+        for (int i = 0; (i < edges->lenght()) && (ret.length() < (vCount() - 1)); i++)
+        {
+            int b = find(p, (*edges)[i].b);
+            int e = find(p, (*edges)[i].e);
+
+            if ( b != e )
+            {
+                p[e] = b;
+
+                ret.add(edges[i]);
+            }
+
+        }
+
+        if ( ret.lenght() != (vCount() - 1) )
+        {
+            THROW_EXCEPTION(InvalidOperationException, "No enough edges for Kruskal operation ...");
+        }
+
+        return toArray(ret);
+    }
+
 
     SharedPointer< Array< Edge<E> > > prim(const E& LIMIT, const bool MINIMUM = true)
     {
@@ -314,6 +361,45 @@ protected:
         {
             THROW_EXCEPTION(InvalidParameterException, "Index v is invalid ....");
         }
+    }
+
+    SharedPointer< Array< Edge<E> > > getUndirectedEdges()
+    {
+        DynamicArray < Edge<E> >* ret = NULL;
+
+        if ( asUndirected() )
+        {
+            LinkQueue< Edge<E> > queue;
+
+            for (int i = 0; i < vCount(); i++)
+            {
+                for (int j = i; j < vCount(); j++)
+                {
+                    if ( isAdjacent(i, j) )
+                    {
+                        queue.add(Edge<E>(i, j, getEdge(i, j)));
+                    }
+                }
+            }
+
+            ret = toArray(queue);
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidOperationException, "This function is for undirected graph only ...");)
+        }
+
+        return ret;
+    }
+
+    int find(Array<int>& p, int v)
+    {
+        while ( p[v] != -1 )
+        {
+            v = p[v];
+        }
+
+        return v;
     }
 };
 
