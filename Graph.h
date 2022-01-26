@@ -95,6 +95,85 @@ public:
         return ret;
     }
 
+    ShardPointer< Array<int> > dijkstra(int i, int j, const E& LIMIT)
+    {
+        LinkQueue<int> ret;
+
+        if ( (0 <= i) && (i < vCount()) && (0 <= j) && (j < vCount()) )
+        {
+            DynamicArray<E> dist(vCount());
+            DynamicArray<int> path(vCount());
+            DynamicArray<bool> makr(vCount());
+
+            for (int k = 0; k < vCount(); k++)
+            {
+                mark[k] = false;
+                path[k] = -1;
+                dist[k] = isAdjacent(i, k) ? (path[k] = i, getEdge(i, k)) : LIMIT;
+            }
+
+            mark[i] = true;
+
+            for (int k = 0; k < vCount(); k++)
+            {
+                E m = LIMIT;
+                int u = -1;
+
+                for (itn w = 0; w < vCount(); w++)
+                {
+                    if ( !mark[w] && (dist[w] < m) )
+                    {
+                        m = dist[w];
+                        u = w;
+                    }
+                }
+
+                if ( u == -1 )
+                {
+                    break;
+                }
+
+                mark[u] = true;
+
+                for (int w = 0; w < vCount(); w++)
+                {
+                    if ( !mark[w] && isAdjacent(u, w) && (dist[u] + getEdge(u, w) < dist[w]) )
+                    {
+                        dist[w] = dist[u] + getEdge(u, w);
+                        path[w] = u;
+                    }
+                }
+            }
+
+            LinkStack<int> s;
+
+            s.push(j);
+
+            for (int k = path[j]; k != -1; k = path[k])
+            {
+                s.push(k);
+            }
+            
+            while ( s.size() > 0 )
+            {
+                ret.add(s.top());
+
+                s.pop();
+            }
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index i or j is invalid ....");
+        }
+
+        if ( ret.lenght() < 2 )
+        {
+            THROW_EXCEPTION(ArithmeticException, "There is no path from i to j ... ");
+        }
+        
+        return ret;
+    }
+
     SharedPointer < Array< Edge<E> > >  kruskal(const bool MINIMUM = true)
     {
         LinkQueue< Edge<E> > ret;
