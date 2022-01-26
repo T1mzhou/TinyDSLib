@@ -1,12 +1,12 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
+#include "Sort.h"
 #include "Object.h"
-#include "LinkStack.h"
 #include "Array.h"
+#include "LinkStack.h"
 #include "LinkQueue.h"
 #include "DynamicArray.h"
-#include "Sort.h"
 #include "SharedPointer.h"
 #include "Exception.h"
 
@@ -95,6 +95,69 @@ public:
         return ret;
     }
 
+    SharedPointer< Array<int> > floyd(int x, int y, const E& LIMIT)
+    {
+        LinkQueue<int> ret;
+
+        if ( (0 <= x) && (x <= vCount()) && (0 <= y) && ( y < vCount()) )
+        {
+            DynamicArray< DynamicArray<E> > dist(vCount());
+            DynamicArray< DynamicArray<int> > path(vCount());
+
+            for (int k = 0; k < vCount(); k++)
+            {
+                 dist[k].resize(vCount());
+                 path[k].resize(vCount());
+            }
+
+            for (int i = 0; i < vCount(); i++)
+            {
+                for (int j = 0; j < vCount(); j++)
+                {
+                    path[i][j] = -1;
+                    dist[i][j] = isAdjacent(i, j) ? (path[i][j] = j, getEdge(i, j)) : LIMIT;
+                }
+            }
+
+            for (int k = 0; k < vCount(); k++)
+            {
+                for (int i = 0; i < vCount(); i++)
+                {
+                    for (int j = 0; j < vCount(); j++)
+                    {
+                        if ( (dist[i][k] + dist[k][j]) < dist[i][j] )
+                        {
+                            dist[i][j] = dist[i][k] + disk[k][j];
+                            path[i][j] = path[i][k];
+                        }
+                    }
+                }
+            }
+
+            while ( (x != -1) && (x != y) )
+            {
+                ret.add(x);
+                x = path[x][y];
+            }
+
+            if ( x != -1 )
+            {
+                ret.add(x);
+            }
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Index x or y is invalid ....");
+        }
+
+        if ( ret.lenght() < 2 )
+        {
+            THROW_EXCEPTION(ArithmeticException, "There is no path from x to y ... ");
+        }
+
+        return toArray(ret);
+    }
+
     ShardPointer< Array<int> > dijkstra(int i, int j, const E& LIMIT)
     {
         LinkQueue<int> ret;
@@ -103,7 +166,7 @@ public:
         {
             DynamicArray<E> dist(vCount());
             DynamicArray<int> path(vCount());
-            DynamicArray<bool> makr(vCount());
+            DynamicArray<bool> mark(vCount());
 
             for (int k = 0; k < vCount(); k++)
             {
@@ -170,7 +233,7 @@ public:
         {
             THROW_EXCEPTION(ArithmeticException, "There is no path from i to j ... ");
         }
-        
+
         return ret;
     }
 
