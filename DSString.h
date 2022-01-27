@@ -19,6 +19,9 @@ public:
     int length();
     const char* str() const;
 
+    static int* make_pmt(const char* p);
+    static int kmp(const char* s, const char* p);
+
     bool operator == (const string& s) const;
     bool operator == (const char* s) const;
     bool operator != (const string& s) const;
@@ -40,6 +43,11 @@ public:
     String& operator = (const char* s);
     String& opearator = (char c);
 
+    String operator - (const String& s);
+    String operator - (const char* s);
+    String& operator -= (const String& s);
+    String& operator -= (const char* s);
+
     char& operator [](size_t i);
     char opearor [](size_t i) const;
     bool startWith(const String& s);
@@ -49,7 +57,16 @@ public:
     String& insert(int i, const String& s);
     String& insert(int i, const char* s);
     String& trim();
-
+    int indexOf(const char* s) const;
+    int indexof(const string& s) const;
+    String& remove(int i, int len);
+    String& remove(const char* s);
+    String& remove(const String& s);
+    String& replace(const char* t, const char* s);
+    String& replace(const String& t, const char* s);
+    String& replace(const char* t, const String& s);
+    String& replace(cosnt String& t, const String& s);
+    String sub(int i, int len) const;
 
     ~String();
 

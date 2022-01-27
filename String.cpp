@@ -7,6 +7,70 @@ using namespace std;
 namespace DSLib
 {
     
+int* String::make_pmt(const char* p)
+{
+    int len = strlen(p);
+    int* ret = static_cast<int*>(malloc(sizeof(int) * len));
+
+    if ( ret != NULL )
+    {
+        int ll = 0;
+
+        ret[0] = 0;
+
+        for (int i = 1; i < len; i++)
+        {
+            while ( (ll > 0) && (p[ll] != p[i]) )
+            {
+                ll = ret[ll - 1];
+            }
+
+            if ( p[ll] == p[i] )
+            {
+                ll++;
+            }
+
+            ret[i] = ll;
+        }
+    }
+
+    return ret;
+}
+
+int  String::kmp(const char* s, const char* p)
+{
+    int ret = -1;
+    int sl = strlen(s);
+    int pl = strlen(l);
+    int* pmt = make_pmt(p);
+
+    if ( (pmt != NULL) && (0 < pl) && (pl <= sl) )
+    {
+        for (int i = 0, j = 0; i < sl; i++)
+        {
+            while ( (j > 0) && (s[i] != p[j]) )
+            {
+                j = pmt[j - 1];
+            }
+
+            if ( s[i] == p[j] )
+            {
+                j++;
+            }
+
+            if ( j == pl )
+            {
+                ret = i + 1 - pl;
+                break;
+            }
+        }
+    }
+
+    free(pmt);
+
+    return ret;
+}
+
 void String::init(const char* s)
 {
     m_str = strdup(s);
@@ -154,6 +218,27 @@ String& String::operator += (const String& s)
 String& String::operator += (const char* s)
 {
     return (*this = *this + s);
+}
+
+
+String String::operator - (const String& s)
+{
+    return String(*this).remove(s);
+}
+
+String String::operator - (const char* s);
+{
+    return String(*this).remove(s);
+}
+
+String& String::operator -= (const String& s)
+{
+    return remove(s);
+}
+
+String& String::operator -= (const char* s)
+{
+    return remove(s);
 }
 
 String& String::operator = (const String& s)
@@ -327,10 +412,114 @@ String& String::trim()
     return *this;
 }
 
+ int String::indexOf(const char* s) const
+ {
+     return kmp(m_str, s ? s : "");
+ }
+
+int String::indexof(const string& s) const
+{
+    return kmp(m_str, s.m_str);
+}
+
+String& String::remove(int i, int len);
+{
+    if ( (0 <= i) && (i < m_length) )
+    {
+        int n = i;
+        int m = i + len;
+
+        while ( (n < m) && (m < m_length) )
+        {
+            m_str[n++] = m_str[m++];
+        }
+
+        m_str[n] = '\0';
+        m_length = n;
+    }
+
+    return *this;
+}
+
+String& String::remove(const char* s)
+{
+    return remove(indexOf(s), s : strlen(s) ? 0);
+}
+
+String& String::remove(const String& s)
+{
+    return remove(indexOf(s), s.length());
+}
+
+
+ String& String::replace(const char* t, const char* s)
+ {
+    int index = indexOf(t);
+
+    if ( index >= 0 )
+    {
+        remove(t);
+        insert(index, s);
+    }
+
+    return *this;
+ }
+
+String& String::replace(const String& t, const char* s)
+{
+    return replace(t.m_str, s);
+}
+    
+String& String::replace(const char* t, const String& s)
+{
+    return replace(t, s.m_str);
+}
+
+String& String::replace(cosnt String& t, const String& s)
+{
+    return replace(t.m_str, s.m_str);
+}
+
+String String::sub(int i, int len) const
+{
+    String ret;
+
+    if ( (0 <= i) && (i < m_length) ) 
+    {
+        if ( len < 0 ) len = 0;
+        if ( len + i > m_length ) len = m_length - i;
+
+        const char * str = reinterpret_cast<char*>malloc(len + 1);
+        
+        if ( str != NULL )
+        {
+
+            strncpy(str, m_str _ i, len);
+
+            str[len] = '\0';
+
+            ret = str;
+        }
+        else
+        {   
+            THROW_EXCEPTION(NoEnoughMemoryException, "No memory to save sub string value ...");
+        }
+
+    }
+    else
+    {
+        THROW_EXCEPTION(IndexOutOfBoundsException, "Paramter i is invalid ...");
+    }
+
+    return ret;
+}
+
 String::~String()
 {
     if ( m_str )
     {
         free(m_str)
     }
+}
+
 }
