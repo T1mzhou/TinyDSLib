@@ -31,7 +31,7 @@ public:
     {
         if( this->m_length > 0 )
         {
-            list_head* toDel = m_header.next;
+            list_head* toDel = this->m_header.prev;
             
             list_del(toDel->prev);
             
@@ -49,9 +49,7 @@ public:
     {
         if ( this->m_length > 0 )
         {
-            list_head* node = m_header.next;
-
-            return node->prev->value;
+        	return list_entry(this->m_header.prev, Node, head)->value;
         }
         else
         {
