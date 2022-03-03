@@ -3,7 +3,7 @@
 
 #include "Object.h"
 
-namespace DTLib
+namespace DSLib
 {
 
 class Sort : public Object
